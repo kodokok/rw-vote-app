@@ -81,9 +81,20 @@
               v-model="selected"
             />
 
+            <div
+              v-if="!c.photo"
+              class="w-24 h-24 rounded-full bg-slate-200
+                    flex items-center justify-center
+                    text-2xl font-bold text-slate-600 mx-auto"
+            >
+              {{ c.nama.charAt(0) }}
+            </div>
+
             <img
+              v-else
               :src="c.photo"
-              class="w-16 h-16 rounded-full border object-cover"
+              @error="onImageError"
+              class="w-24 h-24 rounded-full object-cover mx-auto"
             />
 
             <div class="flex-1">
@@ -327,6 +338,13 @@ function resetForm() {
     const el = document.querySelector('input[type="text"]')
     if (el) el.focus()
   }, 100)
+}
+
+function onImageError(event) {
+  if (!event.target.dataset.fallback) {
+    event.target.dataset.fallback = 'true'
+    event.target.src = '/avatar-default.png'
+  }
 }
 
 /* ======================
