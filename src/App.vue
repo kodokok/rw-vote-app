@@ -173,9 +173,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 /* ======================
    CONFIG
 ====================== */
-// const API_URL = 'https://script.google.com/macros/s/AKfycbwh4l6WNc0N0Q--No6mtkac_c-1fpJw3Ng00dQj7vxUXpSFgIo2k7VYMbfEiusBz0Btpw/exec'
 import { API_URL } from './utils/api'
-
 
 /* ======================
    STATE
@@ -221,7 +219,6 @@ async function fetchVotingStatus() {
   const res = await fetch(`${API_URL}?action=status`)
   const json = await res.json()
 
-  console.log(json)
   votingStart.value = new Date(json.start)
   votingEnd.value = new Date(json.end)
   now.value = new Date(json.now)
