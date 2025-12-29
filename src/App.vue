@@ -36,7 +36,7 @@
       </div>
 
       <!-- VOTING FORM -->
-      <div v-else>
+      <div v-else-if="view === 'form'">
 
         <!-- PIN -->
         <div class="mb-5">
@@ -132,6 +132,29 @@
 
       </div>
 
+      <!-- TERIMA KASIH -->
+      <div
+        v-else-if="view === 'thanks'"
+        class="text-center py-8"
+      >
+        <h2 class="text-2xl font-bold text-green-600 mb-2">
+          🎉 Terima Kasih
+        </h2>
+
+        <p class="text-slate-600 mb-6">
+          Suara Anda telah berhasil dicatat.
+          <br />
+          Partisipasi Anda sangat berarti.
+        </p>
+
+        <button
+          @click="backToForm"
+          class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold"
+        >
+          Kembali ke Form Voting
+        </button>
+      </div>
+
       <!-- FOOTER -->
       <p class="mt-6 text-xs text-center text-slate-400">
         ⚠️ Setiap warga hanya dapat memilih satu kali
@@ -207,6 +230,7 @@ const countdown = ref('')
 let timer = null
 
 const showConfirmModal = ref(false)
+const view = ref('form') // form | thanks
 
 /* ======================
    FETCH CANDIDATES
@@ -302,7 +326,7 @@ async function confirmVote() {
 
     // ✅ SUKSES → OPTIONAL LOCK UI
     if (data.success) {
-      // bisa tambahkan disable form jika mau
+      view.value = 'thanks'
     }
 
   } catch {
@@ -340,10 +364,17 @@ function resetForm() {
   }, 100)
 }
 
+function backToForm() {
+  resetForm()
+  message.value = ''
+  success.value = false
+  view.value = 'form'
+}
+
 function onImageError(event) {
   if (!event.target.dataset.fallback) {
     event.target.dataset.fallback = 'true'
-    event.target.src = '/avatar-default.png'
+    event.target.src = 'https://gravatar.com/avatar/d569400a2428cdaefac57b3c8541eece?s=200&d=mp&r=x'
   }
 }
 
