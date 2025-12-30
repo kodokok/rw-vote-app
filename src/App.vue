@@ -8,10 +8,10 @@
       <!-- HEADER -->
       <div class="text-center mb-4">
         <h1 class="text-2xl font-extrabold text-slate-800">
-          Pemilihan Ketua RW
+          {{ title }}
         </h1>
         <p class="text-sm text-slate-500 mt-1">
-          RW 05 • Periode 2025 – 2030
+          {{ subtitle }}
         </p>
       </div>
 
@@ -25,8 +25,25 @@
         </p>
       </div>
 
+      <!-- LOADING -->
+      <div
+        v-if="isLoading"
+        class="py-10 text-center"
+      >
+        <div
+          class="mx-auto mb-3 h-10 w-10
+                animate-spin rounded-full
+                border-4 border-blue-200
+                border-t-blue-600"
+        ></div>
+
+        <p class="text-slate-500 text-sm">
+          Memuat data voting...
+        </p>
+      </div>
+
       <!-- VOTING CLOSED -->
-      <div v-if="!votingOpen" class="text-center py-6">
+      <div v-else-if="!votingOpen" class="text-center py-6">
         <p class="text-xl font-bold text-red-600">
           Voting tidak tersedia
         </p>
@@ -157,7 +174,7 @@
 
       <!-- FOOTER -->
       <p class="mt-6 text-xs text-center text-slate-400">
-        ⚠️ Setiap warga hanya dapat memilih satu kali
+        {{ footer }}
       </p>
 
     </div>
@@ -202,7 +219,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 /* ======================
    CONFIG
@@ -219,8 +236,10 @@ const message = ref('')
 const success = ref(false)
 
 const candidates = ref([])
-const loadingCandidates = ref(true)
 
+const title = ref('')
+const subtitle = ref('')
+const footer = ref('')
 const votingOpen = ref(false)
 const votingStart = ref(null)
 const votingEnd = ref(null)
@@ -232,16 +251,27 @@ let timer = null
 const showConfirmModal = ref(false)
 const view = ref('form') // form | thanks
 
+const loadingStatus = ref(true)
+const loadingCandidates = ref(true)
+
+const isLoading = computed(() =>
+  loadingStatus.value || loadingCandidates.value
+)
+
 /* ======================
    FETCH CANDIDATES
 ====================== */
 async function fetchCandidates() {
+  loadingCandidates.value = true
   try {
     const res = await fetch(`${API_URL}?action=candidates`)
     const json = await res.json()
+
     if (json.success) {
       candidates.value = json.data
     }
+  } catch (e) {
+    console.error('Gagal memuat kandidat', e)
   } finally {
     loadingCandidates.value = false
   }
@@ -251,15 +281,25 @@ async function fetchCandidates() {
    FETCH VOTING STATUS
 ====================== */
 async function fetchVotingStatus() {
-  const res = await fetch(`${API_URL}?action=status`)
-  const json = await res.json()
+  loadingStatus.value = true
+  try {
+    const res = await fetch(`${API_URL}?action=status`)
+    const json = await res.json()
 
-  votingStart.value = new Date(json.start)
-  votingEnd.value = new Date(json.end)
-  now.value = new Date(json.now)
+    votingStart.value = json.start ? new Date(json.start) : null
+    votingEnd.value = json.end ? new Date(json.end) : null
+    now.value = new Date(json.now)
 
-  updateCountdown()
-  startTimer()
+    title.value = json.title
+    subtitle.value = json.subtitle
+
+    updateCountdown()
+    startTimer()
+  } catch (e) {
+    console.error('Gagal memuat status voting', e)
+  } finally {
+    loadingStatus.value = false
+  }
 }
 
 /* ======================
