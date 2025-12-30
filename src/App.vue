@@ -313,8 +313,10 @@ async function fetchVotingStatus() {
     votingEnd.value = json.end ? new Date(json.end) : null
     now.value = new Date(json.now)
 
+    console.log(json)
     title.value = json.title
     subtitle.value = json.subtitle
+    footer.value = json.app_footer
 
     updateCountdown()
     startTimer()
