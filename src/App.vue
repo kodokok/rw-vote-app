@@ -25,21 +25,44 @@
         </p>
       </div>
 
-      <!-- LOADING -->
-      <div
-        v-if="isLoading"
-        class="py-10 text-center"
-      >
-        <div
-          class="mx-auto mb-3 h-10 w-10
-                animate-spin rounded-full
-                border-4 border-blue-200
-                border-t-blue-600"
-        ></div>
+      <!-- SKELETON LOADER -->
+      <div v-if="isLoading" class="animate-pulse space-y-5">
 
-        <p class="text-slate-500 text-sm">
-          Memuat data voting...
-        </p>
+        <!-- TITLE -->
+        <div class="space-y-2 text-center">
+          <div class="h-6 bg-slate-200 rounded w-2/3 mx-auto"></div>
+          <div class="h-4 bg-slate-200 rounded w-1/2 mx-auto"></div>
+        </div>
+
+        <!-- COUNTDOWN -->
+        <div class="h-4 bg-slate-200 rounded w-1/3 mx-auto"></div>
+
+        <!-- PIN INPUT -->
+        <div class="space-y-2">
+          <div class="h-4 bg-slate-200 rounded w-1/4"></div>
+          <div class="h-10 bg-slate-200 rounded-xl"></div>
+        </div>
+
+        <!-- KANDIDAT -->
+        <div class="space-y-4">
+          <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+
+          <div
+            v-for="i in candidates.length || 2"
+            :key="i"
+            class="flex items-center gap-4 p-4 rounded-xl border border-slate-200"
+          >
+            <div class="w-16 h-16 rounded-full bg-slate-200"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 bg-slate-200 rounded w-2/3"></div>
+              <div class="h-3 bg-slate-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUTTON -->
+        <div class="h-12 bg-slate-200 rounded-xl"></div>
+
       </div>
 
       <!-- VOTING CLOSED -->
